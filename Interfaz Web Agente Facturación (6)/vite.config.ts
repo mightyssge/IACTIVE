@@ -49,12 +49,18 @@
         '@': path.resolve(__dirname, './src'),
       },
     },
-    build: {
-      target: 'esnext',
-      outDir: 'build',
+  build: {
+    target: 'esnext',
+    outDir: 'build',
+    rollupOptions: {
+      input: path.resolve(__dirname, 'index.html'),
     },
-    server: {
-      port: 3000,
-      open: true,
+  },
+  server: {
+    port: 4173, // evita conflicto con backend Node en 3000
+    open: true,
+    proxy: {
+      '/api': 'http://localhost:3000',
     },
-  });
+  },
+});

@@ -3,6 +3,7 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import path from "path";
+import fs from "fs";
 import { callLlmParseInvoice } from "./llmClient";
 import { normalizeDraft } from "./draftNormalizer";
 import { buildInvoice } from "./invoiceCalculator";
@@ -16,8 +17,16 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json({ limit: "1mb" }));
 
+const fallbackFrontend = path.join(__dirname, "..", "..", "frontend");
+const altFrontend = path.join(
+  __dirname,
+  "..",
+  "..",
+  "Interfaz Web Agente Facturación (6)",
+  "build"
+);
 const FRONTEND_DIR =
-  process.env.FRONTEND_DIR || path.join(__dirname, "..", "..", "frontend");
+  process.env.FRONTEND_DIR || (fs.existsSync(altFrontend) ? altFrontend : fallbackFrontend);
 
 app.get("/api/health", (_req, res) => {
   res.json({ status: "ok" });
