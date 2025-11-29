@@ -8,29 +8,6 @@ function simulateRuc(): string {
   return "2" + Math.random().toString().slice(2, 12);
 }
 
-// Intento determinista de extraer items desde texto libre cuando el LLM no entrega precios/cantidades.
-function parseItemsFromText(
-  rawText: string,
-  monedaFromDraft?: string
-): { descripcion: string; cantidad: number; precio_unitario: number }[] {
-  const regex =
-    /(?<cant>\d+(?:[.,]\d+)?)\s*(?:horas?|licencias?|unidades?|u\.?|items?)?(?:\s+de\s+[\w\s/áéíóúñÁÉÍÓÚÑ-]{0,50})?(?:a|@)\s*(?<precio>\d+(?:[.,]\d+)?)(?:\s*(?<moneda>USD|usd|S\/|PEN|pen|soles?))?/gi;
-  const items: { descripcion: string; cantidad: number; precio_unitario: number }[] = [];
-  let match: RegExpExecArray | null;
-  while ((match = regex.exec(rawText)) !== null) {
-    const cant = parseFloat(match.groups?.cant?.replace(",", ".") || "0") || 0;
-    const precio = parseFloat(match.groups?.precio?.replace(",", ".") || "0") || 0;
-    const desc = match[0]?.trim().slice(0, 120) || rawText.slice(0, 120);
-    items.push({
-      descripcion: desc,
-      cantidad: cant > 0 ? cant : 1,
-      precio_unitario: precio >= 0 ? precio : 0,
-    });
-    // si encuentra moneda explícita, podría sobreescribir monedaFromDraft pero aquí solo devolvemos items
-  }
-  return items;
-}
-
 export function normalizeDraft(
   draft: LlmDraft,
   config?: { moneda_default?: string }
@@ -48,7 +25,7 @@ export function normalizeDraft(
     warnings.push("RUC del cliente no tiene 11 dígitos; se usó valor provisto sin validar.");
   }
 
-  let items = (draft.items || []).map((item, idx) => {
+  const items = (draft.items || []).map((item, idx) => {
     let cantidad = Number(item.cantidad ?? 0);
     if (!Number.isFinite(cantidad) || cantidad <= 0) {
       warnings.push(`Cantidad no válida en item ${idx + 1}; se forzó a 1.`);
@@ -65,16 +42,6 @@ export function normalizeDraft(
       precio_unitario: precio,
     };
   });
-
-  // Si los items quedaron sin precios o son vacíos, intenta un parseo regex sobre el texto original.
-  const hasUsefulPrice = items.some((it) => Number.isFinite(it.precio_unitario) && it.precio_unitario > 0);
-  if ((!items.length || !hasUsefulPrice) && draft.raw_text) {
-    const parsed = parseItemsFromText(draft.raw_text, moneda);
-    if (parsed.length) {
-      items = parsed;
-      warnings.push("Se usó parser determinista para extraer cantidades y precios del texto.");
-    }
-  }
 
   const normalized: DraftNormalized = {
     encabezado: { moneda },
