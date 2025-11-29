@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, conlist, confloat
+from pydantic import BaseModel, Field, confloat
 from typing import List, Optional
 
 
@@ -24,9 +24,33 @@ class InvoiceDraft(BaseModel):
         None, description="FACTURA o BOLETA sugerida"
     )
     moneda: Optional[str] = "PEN"
-    items: conlist(Item, min_items=1)
+    items: List[Item]
     observaciones: Optional[str] = None
     inconsistencias_detectadas: List[str] = []
+
+    @classmethod
+    def validate_items(cls, value):
+        if not value or len(value) == 0:
+            raise ValueError("items debe tener al menos un elemento")
+        return value
+
+    # Compatibilidad Pydantic v1 y v2 para validar lista no vacía
+    try:
+        from pydantic import validator  # type: ignore
+
+        _validate_items = validator("items", allow_reuse=True)(validate_items)
+    except Exception:
+        # Pydantic v2
+        try:
+            from pydantic import model_validator  # type: ignore
+
+            @model_validator(mode="before")
+            def _validate_items_v2(cls, values):
+                items = values.get("items")
+                cls.validate_items(items)
+                return values
+        except Exception:
+            pass
 
 
 class ParseRequest(BaseModel):

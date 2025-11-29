@@ -21,7 +21,7 @@ def _build_model(moneda_default: str):
     Selecciona modelo:
     - OpenAI si OPENAI_API_KEY está definido.
     - Ollama local (por ejemplo, llama3) si no hay OpenAI.
-    - Mock determinista si no hay ninguno disponible.
+    - None si no hay ninguno disponible (para usar fallback determinista).
     """
     if os.getenv("OPENAI_API_KEY"):
         return ChatOpenAI(
@@ -38,37 +38,34 @@ def _build_model(moneda_default: str):
             temperature=0,
         ).with_structured_output(InvoiceDraft)
     except Exception:
-        # Fallback determinista mínimo para demo offline
-        def _mock_structured_output(data):
-            return InvoiceDraft(**data)
-
-        class Mock:
-            def invoke(self, values):
-                texto = values["texto"]
-                return InvoiceDraft(
-                    raw_text=texto,
-                    cliente={
-                        "nombre_razon_social": "Cliente Desconocido",
-                        "tipo_documento": "RUC",
-                        "numero_documento": None,
-                    },
-                    tipo_comprobante="FACTURA",
-                    moneda=moneda_default,
-                    items=[
-                        {
-                            "descripcion": texto[:30] or "Item",
-                            "cantidad": 1,
-                            "precio_unitario": 0,
-                        }
-                    ],
-                    observaciones="Modo mock: sin LLM real",
-                    inconsistencias_detectadas=["Respuesta generada sin LLM real."],
-                )
-
-        return Mock()
+        return None
 
 
 def run_llm_parser(texto: str, tasa_igv: Optional[float] = None, moneda_default: str = "PEN") -> InvoiceDraft:
+    model = _build_model(moneda_default)
+
+    # Fallback determinista sin LLM
+    if model is None:
+        return InvoiceDraft(
+            raw_text=texto,
+            cliente={
+                "nombre_razon_social": "Cliente Desconocido",
+                "tipo_documento": "RUC",
+                "numero_documento": None,
+            },
+            tipo_comprobante="FACTURA",
+            moneda=moneda_default,
+            items=[
+                {
+                    "descripcion": texto[:30] or "Item",
+                    "cantidad": 1,
+                    "precio_unitario": 0,
+                }
+            ],
+            observaciones="Modo mock: sin LLM real",
+            inconsistencias_detectadas=["Respuesta generada sin LLM real."],
+        )
+
     prompt = ChatPromptTemplate.from_template(
         """
 Eres un asistente que extrae datos de facturación de texto libre.
@@ -82,7 +79,7 @@ Texto: {texto}
         """
     )
 
-    runnable = prompt | _build_model(moneda_default)
+    runnable = prompt | model
     result: InvoiceDraft = runnable.invoke(
         {"texto": texto, "moneda_default": moneda_default, "tasa_igv": tasa_igv}
     )

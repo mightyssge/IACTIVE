@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
+import path from "path";
 import { callLlmParseInvoice } from "./llmClient";
 import { normalizeDraft } from "./draftNormalizer";
 import { buildInvoice } from "./invoiceCalculator";
@@ -14,6 +15,9 @@ dotenv.config();
 const app = express();
 app.use(cors());
 app.use(bodyParser.json({ limit: "1mb" }));
+
+const FRONTEND_DIR =
+  process.env.FRONTEND_DIR || path.join(__dirname, "..", "..", "frontend");
 
 app.get("/api/health", (_req, res) => {
   res.json({ status: "ok" });
@@ -82,6 +86,12 @@ app.get("/api/invoices/:id/json", (req, res) => {
   }
   res.setHeader("Content-Disposition", `attachment; filename=${id}.json`);
   res.json(record.invoice);
+});
+
+// Servir frontend estático del agente de facturación
+app.use(express.static(FRONTEND_DIR));
+app.get("/", (_req, res) => {
+  res.sendFile(path.join(FRONTEND_DIR, "index.html"));
 });
 
 const PORT = process.env.PORT || 3000;

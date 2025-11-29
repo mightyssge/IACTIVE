@@ -1,0 +1,91 @@
+# ---------------------------------------
+# SISTEMA / SO
+# ---------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---------------------------------------
+# EDITOR (VSCode)
+# ---------------------------------------
+.vscode/
+.idea/
+
+# ---------------------------------------
+# PYTHON
+# ---------------------------------------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+*.egg-info/
+.env
+.venv/
+venv/
+ENV/
+build/
+dist/
+pip-wheel-metadata/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Modelos pesados
+*.pth
+*.ckpt
+*.pt
+*.onnx
+
+# ---------------------------------------
+# NODE / JAVASCRIPT
+# ---------------------------------------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Bundles / build outputs
+dist/
+build/
+*.log
+
+# ---------------------------------------
+# ARCHIVOS DE ENTORNOS / SEGURIDAD
+# ---------------------------------------
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env*
+
+# ---------------------------------------
+# TEMPORALES (generales)
+# ---------------------------------------
+*.tmp
+*.temp
+*.swp
+*.swo
+
+# ---------------------------------------
+# WINDOWS
+# ---------------------------------------
+$RECYCLE.BIN/
+*.lnk
+
+# ---------------------------------------
+# OLLAMA (modelos locales)
+# ---------------------------------------
+/.ollama/
+
+*pyc
+*pyo
+*pyd
+*pdb
+__pycache__/
+*.egg-info/
+.env
+.venv/
+venv/
+*hash

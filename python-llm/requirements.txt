@@ -1,7 +1,10 @@
-fastapi==0.110.2
+fastapi==0.109.2          # Última versión con Pydantic v1
 uvicorn==0.29.0
+numpy==1.26.4             # wheel disponible para Python 3.12 en Windows (evita compilación)
 langchain==0.1.17
 langchain-openai==0.1.4
 langchain-community==0.0.36
-pydantic==1.10.14
+pydantic==1.10.15         # soporte Python 3.12 (corrige ForwardRef)
 python-dotenv==1.0.1
+httpx==0.27.0             # cliente HTTP usado por LangChain/OpenAI
+typing_extensions==4.12.2 # tipado auxiliar (evita avisos en Py<3.11)
