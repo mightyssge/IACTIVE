@@ -1,0 +1,16 @@
+{
+  "raw_text": "Genera una factura a ACME SAC por 2 laptops a 2500 cada una y 1 mouse a 80 soles",
+  "cliente": {
+    "nombre_razon_social": "ACME SAC",
+    "tipo_documento": "RUC",
+    "numero_documento": null
+  },
+  "tipo_comprobante": "FACTURA",
+  "moneda": "PEN",
+  "items": [
+    { "descripcion": "Laptop", "cantidad": 2, "precio_unitario": 2500 },
+    { "descripcion": "Mouse", "cantidad": 1, "precio_unitario": 80 }
+  ],
+  "observaciones": null,
+  "inconsistencias_detectadas": []
+}

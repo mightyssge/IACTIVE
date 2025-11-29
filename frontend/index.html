@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Agente de Facturación SUNAT - MVP</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Agente de Facturación</h1>
+    <p class="lead">Escribe en lenguaje natural y genera borradores de factura con validación determinista.</p>
+
+    <div class="grid">
+      <div class="card">
+        <label for="texto">Descripción en lenguaje natural</label>
+        <textarea id="texto" rows="8" placeholder="Ej: Genera una factura a ACME SAC por 2 laptops a 2500 cada una y 1 mouse a 80 soles"></textarea>
+        <div class="row">
+          <div style="flex:1;">
+            <label for="tasa">IGV</label>
+            <input id="tasa" type="number" step="0.01" value="0.18">
+          </div>
+          <div style="flex:1;">
+            <label for="moneda">Moneda</label>
+            <input id="moneda" type="text" value="PEN">
+          </div>
+        </div>
+        <div class="row" style="margin-top:12px;">
+          <button id="btn-generar">Generar borrador</button>
+          <button id="ejemplo1" type="button">Ejemplo 1</button>
+          <button id="ejemplo2" type="button">Ejemplo 2</button>
+          <span class="badge" id="status">Listo</span>
+        </div>
+        <p id="alerta" style="color:#fca5a5; margin-top:8px; display:none;"></p>
+      </div>
+
+      <div class="card">
+        <div class="row">
+          <strong>Historial en memoria</strong>
+          <span class="badge">Últimas facturas</span>
+        </div>
+        <ul class="history-list" id="history"></ul>
+      </div>
+    </div>
+
+    <div class="grid" style="margin-top:16px;">
+      <div class="card">
+        <div class="row">
+          <strong>Salida LLM (borrador)</strong>
+          <span class="badge warn" id="incons-badge" style="display:none;">Inconsistencias detectadas</span>
+        </div>
+        <pre id="draft_llm">{}</pre>
+      </div>
+      <div class="card">
+        <div class="row">
+          <strong>Factura final (JSON)</strong>
+          <button id="download-json" style="display:none;">Descargar JSON</button>
+        </div>
+        <pre id="invoice_final">{}</pre>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px;">
+      <div class="row">
+        <strong>Vista previa HTML</strong>
+        <button id="download-pdf" style="display:none;">Descargar PDF</button>
+      </div>
+      <iframe id="preview" title="Vista previa"></iframe>
+    </div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

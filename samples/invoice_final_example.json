@@ -1,0 +1,35 @@
+{
+  "encabezado": {
+    "id_interno": "INV-20251129-000123",
+    "tipo_comprobante": "FACTURA",
+    "serie": "F001",
+    "numero": "000123",
+    "fecha_emision": "2025-11-29",
+    "moneda": "PEN"
+  },
+  "emisor": {
+    "ruc": "20123456789",
+    "razon_social": "Mi Empresa SAC",
+    "direccion": "Av. Ficticia 123, Lima"
+  },
+  "cliente": {
+    "tipo_documento": "RUC",
+    "numero_documento": "10456789123",
+    "nombre_razon_social": "ACME SAC",
+    "direccion": null
+  },
+  "items": [
+    { "item": 1, "descripcion": "Laptop", "cantidad": 2, "precio_unitario": 2500, "importe": 5000 },
+    { "item": 2, "descripcion": "Mouse", "cantidad": 1, "precio_unitario": 80, "importe": 80 }
+  ],
+  "totales": {
+    "neto": 5080,
+    "tasa_igv": 0.18,
+    "igv": 914.4,
+    "total": 5994.4
+  },
+  "metadata": {
+    "source_text": "Genera una factura a ACME SAC por 2 laptops a 2500 cada una y 1 mouse a 80 soles",
+    "warnings": ["RUC del cliente fue simulado porque no se proporcionó."]
+  }
+}
